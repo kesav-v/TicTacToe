@@ -2,7 +2,23 @@ public class TicTacToe {
 
 	public static void main(String[] args) {
 		long k = System.nanoTime();
-		int[][] board = {{0, 0, 0},{0, 0, 0}, {0, 0, 0}};
+		int[][] board;
+		if (args.length == 0)
+			board = new int[3][3];
+		else {
+			int s;
+			try {
+				s = Integer.parseInt(args[0]);
+			} catch (Exception e) {
+				s = 3;
+			}
+			board = new int[s][s];
+		}
+		for (int i = 0; i < board.length; i++) {
+			for (int j = 0; j < board[i].length; j++) {
+				board[i][j] = 0;
+			}
+		}
 		System.out.println(addPiece(board, true, 0));
 		System.out.println((System.nanoTime() - k) / 1E9 + " seconds to run");
 	}
@@ -11,7 +27,7 @@ public class TicTacToe {
 		int result = evaluate(board, turn, turns);
 		if (result != 0)
 			return result;
-		else if (turns == 9 && result == 0)
+		else if (turns == board.length * board[0].length && result == 0)
 			return result;
 		int best;
 		if (turn)
