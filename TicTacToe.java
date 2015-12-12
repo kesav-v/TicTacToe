@@ -19,12 +19,12 @@ public class TicTacToe {
 				board[i][j] = 0;
 			}
 		}
-		System.out.println(addPiece(board, true, 0));
+		System.out.println(addPiece(board, true, 0, 0, 0));
 		System.out.println((System.nanoTime() - k) / 1E9 + " seconds to run");
 	}
 
-	public static int addPiece(int[][] board, boolean turn, int turns) {
-		int result = evaluate(board, turn, turns);
+	public static int addPiece(int[][] board, boolean turn, int turns, int x, int y) {
+		int result = evaluate(board, !turn, x, y);
 		if (result != 0)
 			return result;
 		else if (turns == board.length * board[0].length && result == 0)
@@ -42,7 +42,7 @@ public class TicTacToe {
 					board[i][j] = 1;
 				else
 					board[i][j] = -1;
-				int result2 = addPiece(board, !turn, turns + 1);
+				int result2 = addPiece(board, !turn, turns + 1, i, j);
 				board[i][j] = 0;
 				if (turn && result2 == 1)
 					return 1;
@@ -57,53 +57,51 @@ public class TicTacToe {
 		return best;
 	}
 
-	public static int evaluate(int[][] board, boolean turn, int depth) {
+	public static int evaluate(int[][] board, boolean turn, int x, int y) {
 		int color;
 		if (turn)
 			color = 1;
 		else
 			color = -1;
 		boolean allSame = true;
-		for (int i = 0; i < board.length; i++) {
-			allSame = true;
-			for (int j = 0; j < board[i].length; j++) {
-				if (board[i][j] != color) {
-					allSame = false;
-					break;
-				}
-			}
-			if (allSame)
-				return color;
-		}
-		for (int i = 0; i < board[0].length; i++) {
-			allSame = true;
-			for (int j = 0; j < board.length; j++) {
-				if (board[j][i] != color) {
-					allSame = false;
-					break;
-				}
-			}
-			if (allSame)
-				return color;
-		}
-		allSame = true;
-		for (int i = 0; i < board.length; i++) {
-			if (board[i][board.length - i - 1] != color) {
+		for (int j = 0; j < board[x].length; j++) {
+			if (board[x][j] != color) {
 				allSame = false;
 				break;
 			}
 		}
-		if (allSame)
-			return color;
+		if (allSame) return color;
 		allSame = true;
 		for (int i = 0; i < board.length; i++) {
-			if (board[i][i] != color) {
+			if (board[i][y] != color) {
 				allSame = false;
 				break;
 			}
 		}
-		if (allSame)
-			return color;
+		if (allSame) return color;
+		if (x != y && x != board.length - 1 - y) {
+			return 0;
+		}
+		if (x == y) {
+			allSame = true;
+			for (int i = 0; i < board.length; i++) {
+				if (board[i][i] != color) {
+					allSame = false;
+					break;
+				}
+			}
+			if (allSame) return color;
+		}
+		if (x == board.length - 1 - y) {
+			allSame = true;
+			for (int i = 0; i < board.length; i++) {
+				if (board[i][board.length - i - 1] != color) {
+					allSame = false;
+					break;
+				}
+			}
+			if (allSame) return color;
+		}
 		return 0;
 	}
 }
